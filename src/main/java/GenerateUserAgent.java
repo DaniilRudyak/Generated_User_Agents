@@ -1,7 +1,9 @@
+import com.carrotsearch.sizeof.RamUsageEstimator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -18,6 +20,8 @@ public class GenerateUserAgent {
             List<UserAgent> users = Arrays.asList(mapper.readValue(gzFile, UserAgent[].class));
             System.out.println(users.size());
             int randomIndex = randomIndex(users);
+            //System.out.println(InstrumentationFetcher.getObjectSize(users));
+            System.out.println(RamUsageEstimator.shallowSizeOf(users));
             return users.get(randomIndex);
 
         } catch (IOException e) {
@@ -39,13 +43,12 @@ public class GenerateUserAgent {
         }
 
         for (int i = 1; i < arrayWeight.length; ++i) {
-            arrayWeight[i] = arrayWeight[i] / totalWeight;
             for (int j = 0; j < i; ++j) {
                 arrayWeight[i] += arrayWeight[j];
             }
         }
         int findIndex = 0;
-        double randomNumber = Math.PI;
+        double randomNumber = Math.random();
         for (Double weight : arrayWeight) {
             if (weight > randomNumber) {
                 break;
